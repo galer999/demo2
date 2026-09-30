@@ -1,0 +1,779 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Video AR</title>
+
+
+    <!--
+    ============================================================
+    LIBRERÍAS AR
+    ============================================================
+
+    NOTA DE AUTOR:
+
+    A-Frame crea la escena AR.
+
+    MindAR reconoce las fotografías físicas.
+
+    El contenido de video será un elemento HTML flotante
+    sobre la pantalla.
+    -->
+
+    <script src="https://aframe.io/releases/1.5.0/aframe.min.js"></script>
+
+    <script src="https://cdn.jsdelivr.net/npm/mind-ar@1.2.5/dist/mindar-image-aframe.prod.js"></script>
+
+
+    <style>
+
+        /*
+        ============================================================
+        CSS = APARIENCIA VISUAL
+        ============================================================
+
+        NOTA DE AUTOR:
+
+        Aquí se controla la apariencia:
+
+        - menú
+        - botón VIDEO activo
+        - ventana flotante
+        - video
+        - botón CERRAR
+        - texto
+        - tamaños
+        - posiciones
+        */
+
+
+        html,
+        body {
+
+            margin: 0;
+            padding: 0;
+
+            width: 100%;
+            height: 100%;
+
+            overflow: hidden;
+
+            font-family: Arial, sans-serif;
+
+            background: #000;
+        }
+
+
+        /*
+        ============================================================
+        MENÚ SUPERIOR
+        ============================================================
+        */
+
+        #menu {
+
+            position: fixed;
+
+            top: 0;
+            left: 0;
+
+            width: 100%;
+            height: 70px;
+
+            background: rgba(0, 0, 0, 0.85);
+
+            display: flex;
+
+            justify-content: center;
+            align-items: center;
+
+            gap: 10px;
+
+            z-index: 1000;
+        }
+
+
+        /*
+        BOTONES DEL MENÚ
+        */
+
+        #menu button {
+
+            padding: 10px 15px;
+
+            border: none;
+
+            border-radius: 6px;
+
+            cursor: pointer;
+
+            font-size: 14px;
+
+            background: #ddd;
+
+            color: #111;
+        }
+
+
+        /*
+        ============================================================
+        BOTÓN VIDEO ACTIVO
+        ============================================================
+
+        NOTA DE AUTOR:
+
+        Este botón queda resaltado porque estamos
+        dentro de la sección VIDEO.
+        */
+
+        #menu button.active {
+
+            background: #f5c542;
+
+            color: #000;
+
+            font-weight: bold;
+        }
+
+
+        /*
+        ============================================================
+        PANEL FLOTANTE DEL VIDEO
+        ============================================================
+
+        NOTA DE AUTOR:
+
+        MUY IMPORTANTE:
+
+        Este panel es HTML fijo sobre la pantalla.
+
+        NO está pegado a m8 ni a m9.
+
+        Por eso, una vez reconocido el target,
+        el usuario puede mover la cámara libremente
+        y el video seguirá visible.
+        */
+
+        #panelVideo {
+
+            position: fixed;
+
+            left: 50%;
+            top: 50%;
+
+            transform: translate(-50%, -50%);
+
+            width: min(800px, 92%);
+
+            max-height: 85vh;
+
+            box-sizing: border-box;
+
+            padding: 20px;
+
+            background: rgba(15, 15, 15, 0.95);
+
+            border-radius: 15px;
+
+            z-index: 2000;
+
+            display: none;
+
+            overflow-y: auto;
+        }
+
+
+        /*
+        ============================================================
+        BOTÓN CERRAR
+        ============================================================
+        */
+
+        #cerrar {
+
+            display: block;
+
+            margin-left: auto;
+
+            margin-bottom: 15px;
+
+            padding: 10px 16px;
+
+            border: none;
+
+            border-radius: 6px;
+
+            background: #d33;
+
+            color: white;
+
+            font-size: 15px;
+
+            cursor: pointer;
+        }
+
+
+        /*
+        ============================================================
+        TÍTULO DEL VIDEO
+        ============================================================
+        */
+
+        #tituloVideo {
+
+            margin: 5px 0 20px 0;
+
+            color: white;
+
+            text-align: center;
+
+            font-size: 25px;
+        }
+
+
+        /*
+        ============================================================
+        REPRODUCTOR DE VIDEO
+        ============================================================
+
+        NOTA DE AUTOR:
+
+        "controls" hace que el navegador muestre
+        los controles normales:
+
+        - Play
+        - Pausa
+        - Barra de desplazamiento
+        - Tiempo
+        - Volumen
+        - Pantalla completa
+        */
+
+        #reproductorVideo {
+
+            display: block;
+
+            width: 100%;
+
+            max-height: 65vh;
+
+            background: #000;
+
+            border-radius: 8px;
+        }
+
+
+        /*
+        ============================================================
+        PANEL DE TEXTO
+        ============================================================
+
+        NOTA DE AUTOR:
+
+        Debajo del video podemos mostrar información
+        relacionada con el contenido.
+
+        El fondo permite mantener contraste con el texto.
+        */
+
+        #textoVideo {
+
+            margin-top: 20px;
+
+            padding: 20px;
+
+            background: #f5f5f5;
+
+            color: #111;
+
+            border-radius: 10px;
+
+            line-height: 1.5;
+
+            font-size: 16px;
+        }
+
+
+        /*
+        ============================================================
+        ESCENA AR
+        ============================================================
+        */
+
+        a-scene {
+
+            position: fixed;
+
+            top: 0;
+            left: 0;
+
+            width: 100%;
+            height: 100%;
+
+            z-index: 1;
+        }
+
+    </style>
+
+</head>
+
+
+<body>
+
+
+    <!--
+    ================================================================
+    MENÚ SUPERIOR
+    ================================================================
+
+    NOTA DE AUTOR:
+
+    El menú sigue visible.
+
+    VIDEO queda resaltado para indicar la sección actual.
+    -->
+
+    <div id="menu">
+
+        <button onclick="location.href='index.html'">
+            ÍNDICE
+        </button>
+
+        <button onclick="location.href='mp3.htm'">
+            AUDIO
+        </button>
+
+        <button class="active">
+            VIDEO
+        </button>
+
+        <button onclick="location.href='pdf.htm'">
+            PDF
+        </button>
+
+        <button onclick="location.href='galeria.htm'">
+            GALERÍA
+        </button>
+
+    </div>
+
+
+
+    <!--
+    ================================================================
+    ESCENA AR
+    ================================================================
+
+    NOTA DE AUTOR:
+
+    MindAR utiliza targets.mind para reconocer
+    las fotografías físicas.
+
+    m8 y m9 son los targets de VIDEO.
+
+    No abrimos otra página cuando se reconocen.
+
+    El reconocimiento simplemente activa
+    el panel flotante.
+    -->
+
+    <a-scene
+
+        mindar-image="imageTargetSrc: ./targets.mind;"
+
+        color-space="sRGB"
+
+        renderer="colorManagement: true, physicallyCorrectLights"
+
+        vr-mode-ui="enabled: false"
+
+        device-orientation-permission-ui="enabled: false">
+
+
+        <!--
+        ============================================================
+        CÁMARA
+        ============================================================
+        -->
+
+        <a-camera
+
+            position="0 0 0"
+
+            look-controls="enabled: false"
+
+            cursor="fuse: false; rayOrigin: mouse"
+
+            raycaster="objects: .clickable">
+
+        </a-camera>
+
+
+
+        <!--
+        ============================================================
+        TARGET m8
+        ============================================================
+
+        NOTA DE AUTOR:
+
+        m1 = índice 0
+        m2 = índice 1
+        m3 = índice 2
+        m4 = índice 3
+        m5 = índice 4
+        m6 = índice 5
+        m7 = índice 6
+
+        Por lo tanto:
+
+        m8 = índice 7
+
+        Cuando se reconoce m8:
+        → se carga video1.mp4
+        -->
+
+        <a-entity
+
+            mindar-image-target="targetIndex: 7"
+
+            data-video="videos/video1.mp4"
+
+            data-titulo="Video 1"
+
+            data-texto="Texto informativo correspondiente al Video 1.">
+
+        </a-entity>
+
+
+
+        <!--
+        ============================================================
+        TARGET m9
+        ============================================================
+
+        m9 = índice 8
+
+        Cuando se reconoce m9:
+        → se carga video2.mp4
+        -->
+
+        <a-entity
+
+            mindar-image-target="targetIndex: 8"
+
+            data-video="videos/video2.mp4"
+
+            data-titulo="Video 2"
+
+            data-texto="Texto informativo correspondiente al Video 2.">
+
+        </a-entity>
+
+    </a-scene>
+
+
+
+    <!--
+    ================================================================
+    PANEL FLOTANTE
+    ================================================================
+
+    NOTA DE AUTOR:
+
+    Este panel permanece fijo en la pantalla.
+
+    No depende de la posición de la fotografía.
+
+    Una vez abierto, el usuario puede mover la cámara
+    y el video seguirá visible.
+    -->
+
+    <div id="panelVideo">
+
+
+        <!--
+        BOTÓN CERRAR
+        -->
+
+        <button id="cerrar">
+            ← CERRAR
+        </button>
+
+
+        <!--
+        TÍTULO
+        -->
+
+        <h1 id="tituloVideo">
+            Video
+        </h1>
+
+
+        <!--
+        ============================================================
+        REPRODUCTOR
+        ============================================================
+
+        NOTA DE AUTOR:
+
+        "controls" proporciona los controles nativos
+        del navegador.
+
+        El video NO comienza automáticamente.
+
+        El usuario pulsa Play.
+        -->
+
+        <video
+
+            id="reproductorVideo"
+
+            controls
+
+            playsinline>
+
+            Tu navegador no puede reproducir este video.
+
+        </video>
+
+
+        <!--
+        ============================================================
+        TEXTO
+        ============================================================
+        -->
+
+        <div id="textoVideo">
+
+            Aquí aparecerá el texto correspondiente
+            al contenido reconocido.
+
+        </div>
+
+
+    </div>
+
+
+
+    <script>
+
+        /*
+        ============================================================
+        JAVASCRIPT
+        ============================================================
+
+        NOTA DE AUTOR:
+
+        Aquí conectamos:
+
+        FOTO FÍSICA
+             ↓
+        TARGET RECONOCIDO
+             ↓
+        VIDEO CORRESPONDIENTE
+             ↓
+        PANEL FLOTANTE
+        */
+
+
+        /*
+        ============================================================
+        OBTENER ELEMENTOS
+        ============================================================
+        */
+
+        const panelVideo =
+            document.getElementById("panelVideo");
+
+
+        const reproductorVideo =
+            document.getElementById("reproductorVideo");
+
+
+        const tituloVideo =
+            document.getElementById("tituloVideo");
+
+
+        const textoVideo =
+            document.getElementById("textoVideo");
+
+
+        const botonCerrar =
+            document.getElementById("cerrar");
+
+
+
+        /*
+        ============================================================
+        BUSCAR LOS TARGETS
+        ============================================================
+        */
+
+        const targets =
+            document.querySelectorAll(
+                "[mindar-image-target]"
+            );
+
+
+
+        /*
+        ============================================================
+        RECONOCIMIENTO
+        ============================================================
+
+        NOTA DE AUTOR:
+
+        Cuando MindAR reconoce m8 o m9,
+        se ejecuta esta función.
+
+        No cambiamos de página.
+
+        Simplemente mostramos el video flotante.
+        */
+
+        targets.forEach(function(target) {
+
+
+            target.addEventListener(
+                "targetFound",
+                function() {
+
+
+                    /*
+                    ------------------------------------------------
+                    OBTENER DATOS
+                    ------------------------------------------------
+                    */
+
+                    const video =
+                        target.getAttribute(
+                            "data-video"
+                        );
+
+
+                    const titulo =
+                        target.getAttribute(
+                            "data-titulo"
+                        );
+
+
+                    const texto =
+                        target.getAttribute(
+                            "data-texto"
+                        );
+
+
+
+                    /*
+                    ------------------------------------------------
+                    COLOCAR INFORMACIÓN
+                    ------------------------------------------------
+                    */
+
+                    tituloVideo.textContent =
+                        titulo;
+
+
+                    textoVideo.textContent =
+                        texto;
+
+
+
+                    /*
+                    ------------------------------------------------
+                    CARGAR VIDEO
+                    ------------------------------------------------
+
+                    m8 → video1.mp4
+
+                    m9 → video2.mp4
+                    */
+
+                    reproductorVideo.src =
+                        video;
+
+
+                    /*
+                    ------------------------------------------------
+                    MOSTRAR PANEL
+                    ------------------------------------------------
+                    */
+
+                    panelVideo.style.display =
+                        "block";
+
+                }
+
+            );
+
+        });
+
+
+
+        /*
+        ============================================================
+        BOTÓN CERRAR
+        ============================================================
+
+        NOTA DE AUTOR:
+
+        El video permanece abierto sin límite de tiempo.
+
+        Solo se cierra cuando el usuario pulsa
+        ← CERRAR.
+        */
+
+        botonCerrar.addEventListener(
+            "click",
+            function() {
+
+
+                /*
+                DETENER VIDEO
+                */
+
+                reproductorVideo.pause();
+
+
+                /*
+                VOLVER AL PRINCIPIO
+                */
+
+                reproductorVideo.currentTime = 0;
+
+
+                /*
+                QUITAR VIDEO ACTUAL
+                */
+
+                reproductorVideo.removeAttribute(
+                    "src"
+                );
+
+
+                reproductorVideo.load();
+
+
+                /*
+                OCULTAR PANEL
+                */
+
+                panelVideo.style.display =
+                    "none";
+
+            }
+        );
+
+    </script>
+
+
+</body>
+
+</html>
+```

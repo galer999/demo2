@@ -1,0 +1,740 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1.0">
+
+    <title>Galería - Realidad Aumentada</title>
+
+
+    <!-- =========================================================
+         A-FRAME
+         ========================================================= -->
+
+    <script src="https://aframe.io/releases/1.5.0/aframe.min.js"></script>
+
+
+    <!-- =========================================================
+         MINDAR
+         ========================================================= -->
+
+    <script src="https://cdn.jsdelivr.net/npm/mind-ar@1.2.5/dist/mindar-image-aframe.prod.js"></script>
+
+
+    <style>
+
+        /* =========================================================
+           CONFIGURACIÓN GENERAL
+           ========================================================= */
+
+        body {
+            margin: 0;
+            font-family: Arial, sans-serif;
+            background: #000;
+            overflow: hidden;
+        }
+
+
+        /* =========================================================
+           MENÚ SUPERIOR
+           ========================================================= */
+
+        #menu {
+            position: fixed;
+
+            top: 0;
+            left: 0;
+
+            width: 100%;
+            height: 55px;
+
+            display: flex;
+            justify-content: center;
+            align-items: center;
+
+            gap: 5px;
+
+            background: rgba(0, 0, 0, 0.90);
+
+            z-index: 3000;
+        }
+
+
+        #menu button {
+
+            border: none;
+
+            padding: 9px 13px;
+
+            background: #333;
+
+            color: white;
+
+            border-radius: 5px;
+
+            font-size: 13px;
+
+            cursor: pointer;
+        }
+
+
+        /* GALERÍA queda marcada como sección activa */
+
+        #menu .activo {
+
+            background: #f5c542;
+
+            color: #000;
+        }
+
+
+
+        /* =========================================================
+           PANEL FLOTANTE DE LA GALERÍA
+           ========================================================= */
+
+        #panelGaleria {
+
+            position: fixed;
+
+            top: 50%;
+            left: 50%;
+
+            transform: translate(-50%, -50%);
+
+            width: min(850px, 94%);
+
+            max-height: 85vh;
+
+            padding: 15px;
+
+            box-sizing: border-box;
+
+            background: rgba(20, 20, 20, 0.96);
+
+            border-radius: 14px;
+
+            z-index: 2000;
+
+            display: none;
+
+            box-shadow: 0 0 30px rgba(0, 0, 0, 0.8);
+        }
+
+
+
+        /* =========================================================
+           BOTÓN CERRAR
+           ========================================================= */
+
+        #cerrarGaleria {
+
+            display: block;
+
+            margin: 0 auto 10px auto;
+
+            border: none;
+
+            background: #f5c542;
+
+            color: #000;
+
+            padding: 10px 18px;
+
+            border-radius: 6px;
+
+            font-size: 15px;
+
+            font-weight: bold;
+
+            cursor: pointer;
+        }
+
+
+
+        /* =========================================================
+           TÍTULO
+           ========================================================= */
+
+        #tituloGaleria {
+
+            color: white;
+
+            text-align: center;
+
+            margin: 5px 0 10px 0;
+
+            font-size: 20px;
+        }
+
+
+
+        /* =========================================================
+           CONTENEDOR DE LA FOTO
+           ========================================================= */
+
+        #contenedorFoto {
+
+            width: 100%;
+
+            height: 58vh;
+
+            display: flex;
+
+            justify-content: center;
+
+            align-items: center;
+
+            background: #111;
+
+            border-radius: 8px;
+
+            overflow: hidden;
+        }
+
+
+        #fotoGaleria {
+
+            max-width: 100%;
+
+            max-height: 100%;
+
+            width: auto;
+
+            height: auto;
+
+            object-fit: contain;
+
+            display: block;
+        }
+
+
+
+        /* =========================================================
+           CONTROLES DE LA GALERÍA
+           ========================================================= */
+
+        #controlesGaleria {
+
+            display: flex;
+
+            justify-content: center;
+
+            align-items: center;
+
+            gap: 20px;
+
+            margin-top: 12px;
+        }
+
+
+        #controlesGaleria button {
+
+            border: none;
+
+            background: #f5c542;
+
+            color: #000;
+
+            width: 55px;
+
+            height: 42px;
+
+            border-radius: 7px;
+
+            font-size: 24px;
+
+            font-weight: bold;
+
+            cursor: pointer;
+        }
+
+
+        #numeroFoto {
+
+            color: white;
+
+            font-size: 15px;
+
+            min-width: 60px;
+
+            text-align: center;
+        }
+
+
+
+        /* =========================================================
+           ESCENA AR
+           ========================================================= */
+
+        a-scene {
+
+            position: fixed;
+
+            top: 0;
+            left: 0;
+
+            width: 100%;
+            height: 100%;
+
+            z-index: 1;
+        }
+
+    </style>
+
+</head>
+
+
+<body>
+
+
+    <!-- =========================================================
+         MENÚ PRINCIPAL
+         ========================================================= -->
+
+    <div id="menu">
+
+        <button onclick="location.href='index.html'">
+            ÍNDICE
+        </button>
+
+        <button onclick="location.href='mp3.htm'">
+            AUDIO
+        </button>
+
+        <button onclick="location.href='video.htm'">
+            VIDEO
+        </button>
+
+        <button onclick="location.href='pdf.htm'">
+            PDF
+        </button>
+
+        <button class="activo">
+            GALERÍA
+        </button>
+
+    </div>
+
+
+
+    <!-- =========================================================
+         PANEL FLOTANTE
+         ========================================================= -->
+
+    <div id="panelGaleria">
+
+
+        <!-- Botón para cerrar la galería -->
+
+        <button id="cerrarGaleria">
+            ← CERRAR
+        </button>
+
+
+        <!-- Título de la galería -->
+
+        <div id="tituloGaleria">
+            Galería
+        </div>
+
+
+        <!-- =====================================================
+             FOTO ACTUAL
+             ===================================================== -->
+
+        <div id="contenedorFoto">
+
+            <img
+                id="fotoGaleria"
+                src=""
+                alt="Imagen de galería"
+            >
+
+        </div>
+
+
+
+        <!-- =====================================================
+             FLECHAS
+             ===================================================== -->
+
+        <div id="controlesGaleria">
+
+
+            <!-- Foto anterior -->
+
+            <button id="anterior">
+                ←
+            </button>
+
+
+            <!-- Número de foto -->
+
+            <div id="numeroFoto">
+                1 / 3
+            </div>
+
+
+            <!-- Foto siguiente -->
+
+            <button id="siguiente">
+                →
+            </button>
+
+
+        </div>
+
+    </div>
+
+
+
+    <!-- =========================================================
+         ESCENA MINDAR
+         ========================================================= -->
+
+    <a-scene
+
+        mindar-image="imageTargetSrc: ./targets.mind;"
+
+        color-space="sRGB"
+
+        renderer="colorManagement: true, physicallyCorrectLights"
+
+        vr-mode-ui="enabled: false"
+
+        device-orientation-permission-ui="enabled: false"
+    >
+
+
+        <a-camera
+            position="0 0 0"
+            look-controls="enabled: false">
+        </a-camera>
+
+
+
+        <!-- =====================================================
+             m12 = GALERÍA 1
+             targetIndex 11
+             ===================================================== -->
+
+        <a-entity
+
+            mindar-image-target="targetIndex: 11"
+
+            data-galeria="galeria1"
+
+        >
+        </a-entity>
+
+
+
+        <!-- =====================================================
+             m13 = GALERÍA 2
+             targetIndex 12
+             ===================================================== -->
+
+        <a-entity
+
+            mindar-image-target="targetIndex: 12"
+
+            data-galeria="galeria2"
+
+        >
+        </a-entity>
+
+
+    </a-scene>
+
+
+
+    <script>
+
+        /* =========================================================
+           ELEMENTOS DEL PANEL
+           ========================================================= */
+
+        const panelGaleria =
+            document.getElementById("panelGaleria");
+
+        const fotoGaleria =
+            document.getElementById("fotoGaleria");
+
+        const tituloGaleria =
+            document.getElementById("tituloGaleria");
+
+        const numeroFoto =
+            document.getElementById("numeroFoto");
+
+        const cerrarGaleria =
+            document.getElementById("cerrarGaleria");
+
+        const anterior =
+            document.getElementById("anterior");
+
+        const siguiente =
+            document.getElementById("siguiente");
+
+
+
+        /* =========================================================
+           GALERÍAS
+           =========================================================
+           Cada marcador tiene tres imágenes.
+
+           m12:
+           galeria1/foto1.jpg
+           galeria1/foto2.jpg
+           galeria1/foto3.jpg
+
+           m13:
+           galeria2/foto1.jpg
+           galeria2/foto2.jpg
+           galeria2/foto3.jpg
+
+           Se pueden cambiar los nombres de los archivos aquí
+           si posteriormente se utilizan otros nombres.
+           ========================================================= */
+
+       const galerias = {
+
+    galeria1: [
+
+        "galeria/galeria1/foto1.jpg",
+        "galeria/galeria1/foto2.jpg",
+        "galeria/galeria1/foto3.jpg"
+
+    ],
+
+    galeria2: [
+
+        "galeria/galeria2/foto1.jpg",
+        "galeria/galeria2/foto2.jpg",
+        "galeria/galeria2/foto3.jpg"
+
+    ]
+
+};
+
+
+
+        /* =========================================================
+           VARIABLES DE CONTROL
+           ========================================================= */
+
+        let galeriaActual = null;
+
+        let fotoActual = 0;
+
+
+
+        /* =========================================================
+           MOSTRAR FOTO
+           ========================================================= */
+
+        function mostrarFoto() {
+
+            /* Obtiene la lista de imágenes de la galería actual */
+
+            const fotos =
+                galerias[galeriaActual];
+
+
+            /* Coloca la fotografía correspondiente */
+
+            fotoGaleria.src =
+                fotos[fotoActual];
+
+
+            /* Actualiza el contador */
+
+            numeroFoto.textContent =
+                (fotoActual + 1) + " / " + fotos.length;
+
+        }
+
+
+
+        /* =========================================================
+           RECONOCIMIENTO DE m12 Y m13
+           ========================================================= */
+
+        const objetivos =
+            document.querySelectorAll(
+                "[mindar-image-target]"
+            );
+
+
+        objetivos.forEach(function(objetivo) {
+
+
+            objetivo.addEventListener(
+                "targetFound",
+                function() {
+
+
+                    /* Obtiene qué galería corresponde al marcador */
+
+                    galeriaActual =
+                        objetivo.getAttribute(
+                            "data-galeria"
+                        );
+
+
+                    /* Siempre comienza desde la primera foto */
+
+                    fotoActual = 0;
+
+
+                    /* Cambia el título */
+
+                    if (galeriaActual === "galeria1") {
+
+                        tituloGaleria.textContent =
+                            "Galería 1";
+
+                    }
+
+                    else {
+
+                        tituloGaleria.textContent =
+                            "Galería 2";
+
+                    }
+
+
+                    /* Muestra la primera fotografía */
+
+                    mostrarFoto();
+
+
+                    /* Muestra el panel flotante */
+
+                    panelGaleria.style.display =
+                        "block";
+
+                }
+            );
+
+        });
+
+
+
+        /* =========================================================
+           BOTÓN FOTO ANTERIOR
+           ========================================================= */
+
+        anterior.addEventListener(
+            "click",
+            function() {
+
+
+                if (!galeriaActual) {
+                    return;
+                }
+
+
+                const fotos =
+                    galerias[galeriaActual];
+
+
+                /*
+                 Si está en la primera foto,
+                 pasa a la última.
+                */
+
+                fotoActual--;
+
+                if (fotoActual < 0) {
+
+                    fotoActual =
+                        fotos.length - 1;
+                }
+
+
+                mostrarFoto();
+
+            }
+        );
+
+
+
+        /* =========================================================
+           BOTÓN FOTO SIGUIENTE
+           ========================================================= */
+
+        siguiente.addEventListener(
+            "click",
+            function() {
+
+
+                if (!galeriaActual) {
+                    return;
+                }
+
+
+                const fotos =
+                    galerias[galeriaActual];
+
+
+                /*
+                 Si está en la última foto,
+                 vuelve a la primera.
+                */
+
+                fotoActual++;
+
+                if (fotoActual >= fotos.length) {
+
+                    fotoActual = 0;
+                }
+
+
+                mostrarFoto();
+
+            }
+        );
+
+
+
+        /* =========================================================
+           BOTÓN CERRAR
+           =========================================================
+           Cierra solamente el panel.
+
+           La cámara continúa funcionando y permite reconocer
+           nuevamente m12 o m13.
+           ========================================================= */
+
+        cerrarGaleria.addEventListener(
+            "click",
+            function() {
+
+
+                panelGaleria.style.display =
+                    "none";
+
+
+                fotoGaleria.src = "";
+
+
+                galeriaActual = null;
+
+
+                fotoActual = 0;
+
+            }
+        );
+
+    </script>
+
+
+</body>
+
+</html>
+```

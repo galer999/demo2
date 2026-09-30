@@ -1,0 +1,374 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>PDF - Realidad Aumentada</title>
+
+    <!-- A-Frame: motor de la escena AR -->
+    <script src="https://aframe.io/releases/1.5.0/aframe.min.js"></script>
+
+    <!-- MindAR: reconocimiento de imágenes -->
+    <script src="https://cdn.jsdelivr.net/npm/mind-ar@1.2.5/dist/mindar-image-aframe.prod.js"></script>
+
+    <style>
+
+        /* =========================================================
+           MENÚ SUPERIOR
+           ========================================================= */
+
+        body {
+            margin: 0;
+            font-family: Arial, sans-serif;
+            background: #000;
+            overflow: hidden;
+        }
+
+        #menu {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 55px;
+
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 5px;
+
+            background: rgba(0, 0, 0, 0.90);
+
+            z-index: 3000;
+        }
+
+        #menu button {
+            border: none;
+            padding: 9px 13px;
+
+            background: #333;
+            color: white;
+
+            border-radius: 5px;
+
+            font-size: 13px;
+            cursor: pointer;
+        }
+
+        /* PDF queda marcado como sección activa */
+        #menu .activo {
+            background: #f5c542;
+            color: #000;
+        }
+
+
+        /* =========================================================
+           PANEL PDF FLOTANTE
+           =========================================================
+           Este panel NO está unido físicamente a la imagen.
+           Se mantiene fijo sobre la pantalla aunque la cámara
+           se mueva.
+           ========================================================= */
+
+        #panelPDF {
+            position: fixed;
+
+            top: 50%;
+            left: 50%;
+
+            transform: translate(-50%, -50%);
+
+            width: min(900px, 94%);
+            height: min(80vh, 750px);
+
+            background: rgba(20, 20, 20, 0.96);
+
+            border-radius: 14px;
+
+            padding: 15px;
+
+            box-sizing: border-box;
+
+            z-index: 2000;
+
+            display: none;
+
+            box-shadow: 0 0 30px rgba(0, 0, 0, 0.8);
+        }
+
+
+        /* =========================================================
+           BOTÓN CERRAR
+           ========================================================= */
+
+        #cerrarPDF {
+            display: block;
+
+            margin: 0 auto 10px auto;
+
+            border: none;
+
+            background: #f5c542;
+            color: #000;
+
+            padding: 10px 18px;
+
+            border-radius: 6px;
+
+            font-size: 15px;
+            font-weight: bold;
+
+            cursor: pointer;
+        }
+
+
+        /* =========================================================
+           TÍTULO DEL PDF
+           ========================================================= */
+
+        #tituloPDF {
+            color: white;
+
+            text-align: center;
+
+            margin: 5px 0 10px 0;
+
+            font-size: 20px;
+        }
+
+
+        /* =========================================================
+           VISOR DEL PDF
+           ========================================================= */
+
+        #visorPDF {
+            width: 100%;
+            height: calc(100% - 85px);
+
+            border: none;
+
+            background: white;
+
+            border-radius: 8px;
+        }
+
+
+        /* =========================================================
+           ESCENA AR
+           ========================================================= */
+
+        a-scene {
+            position: fixed;
+
+            top: 0;
+            left: 0;
+
+            width: 100%;
+            height: 100%;
+
+            z-index: 1;
+        }
+
+    </style>
+</head>
+
+
+<body>
+
+
+    <!-- =========================================================
+         MENÚ PRINCIPAL
+         ========================================================= -->
+
+    <div id="menu">
+
+        <button onclick="location.href='index.html'">
+            ÍNDICE
+        </button>
+
+        <button onclick="location.href='mp3.htm'">
+            AUDIO
+        </button>
+
+        <button onclick="location.href='video.htm'">
+            VIDEO
+        </button>
+
+        <button class="activo">
+            PDF
+        </button>
+
+        <button onclick="location.href='galeria.htm'">
+            GALERÍA
+        </button>
+
+    </div>
+
+
+
+    <!-- =========================================================
+         PANEL FLOTANTE DEL PDF
+         ========================================================= -->
+
+    <div id="panelPDF">
+
+        <!-- Este botón cierra solamente el contenido flotante.
+             La cámara AR continúa funcionando debajo. -->
+
+        <button id="cerrarPDF">
+            ← CERRAR
+        </button>
+
+
+        <div id="tituloPDF">
+            PDF
+        </div>
+
+
+        <!--
+            El PDF se carga aquí.
+            No se abre una página nueva.
+        -->
+
+        <iframe id="visorPDF"></iframe>
+
+    </div>
+
+
+
+    <!-- =========================================================
+         ESCENA MINDAR
+         ========================================================= -->
+
+    <a-scene
+        mindar-image="imageTargetSrc: ./targets.mind;"
+        color-space="sRGB"
+        renderer="colorManagement: true, physicallyCorrectLights"
+        vr-mode-ui="enabled: false"
+        device-orientation-permission-ui="enabled: false"
+    >
+
+        <a-camera position="0 0 0" look-controls="enabled: false">
+        </a-camera>
+
+
+        <!-- =====================================================
+             m10 = PDF 1
+             targetIndex 9
+             ===================================================== -->
+
+        <a-entity
+            mindar-image-target="targetIndex: 9"
+            data-pdf="pdf/pdf1.pdf"
+            data-titulo="PDF 1"
+        >
+        </a-entity>
+
+
+        <!-- =====================================================
+             m11 = PDF 2
+             targetIndex 10
+             ===================================================== -->
+
+        <a-entity
+            mindar-image-target="targetIndex: 10"
+            data-pdf="pdf/pdf2.pdf"
+            data-titulo="PDF 2"
+        >
+        </a-entity>
+
+    </a-scene>
+
+
+
+    <script>
+
+        /* =========================================================
+           ELEMENTOS DEL PANEL
+           ========================================================= */
+
+        const panelPDF = document.getElementById("panelPDF");
+
+        const visorPDF = document.getElementById("visorPDF");
+
+        const tituloPDF = document.getElementById("tituloPDF");
+
+        const cerrarPDF = document.getElementById("cerrarPDF");
+
+
+
+        /* =========================================================
+           RECONOCIMIENTO DE LAS IMÁGENES
+           =========================================================
+           Cuando MindAR reconoce m10 o m11:
+
+           1. Obtiene el PDF correspondiente.
+           2. Coloca el PDF dentro del visor.
+           3. Muestra el panel flotante.
+           
+           El panel queda visible aunque la cámara deje de apuntar
+           a la imagen reconocida.
+           ========================================================= */
+
+        const objetivos = document.querySelectorAll(
+            "[mindar-image-target]"
+        );
+
+
+        objetivos.forEach(function(objetivo) {
+
+            objetivo.addEventListener(
+                "targetFound",
+                function() {
+
+                    const archivoPDF =
+                        objetivo.getAttribute("data-pdf");
+
+                    const titulo =
+                        objetivo.getAttribute("data-titulo");
+
+
+                    tituloPDF.textContent = titulo;
+
+
+                    /* Carga el PDF dentro del panel */
+                    visorPDF.src = archivoPDF;
+
+
+                    /* Muestra el contenido flotante */
+                    panelPDF.style.display = "block";
+
+                }
+            );
+
+        });
+
+
+
+        /* =========================================================
+           BOTÓN CERRAR
+           =========================================================
+           Al cerrar:
+
+           - Se elimina el PDF del visor.
+           - Se oculta el panel.
+           - La cámara AR sigue funcionando.
+           - Se pueden reconocer nuevamente m10 o m11.
+           ========================================================= */
+
+        cerrarPDF.addEventListener(
+            "click",
+            function() {
+
+                visorPDF.src = "";
+
+                panelPDF.style.display = "none";
+
+            }
+        );
+
+    </script>
+
+</body>
+</html>
+```

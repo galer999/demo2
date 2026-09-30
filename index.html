@@ -1,0 +1,434 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <!-- Hace que la página se adapte al tamaño del celular -->
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Índice AR</title>
+
+
+    <!-- =========================================================
+         A-FRAME
+         Librería que utilizaremos para manejar la escena AR.
+         ========================================================= -->
+    <script src="https://aframe.io/releases/1.5.0/aframe.min.js"></script>
+
+
+    <!-- =========================================================
+         MINDAR
+         Librería encargada del reconocimiento de imágenes.
+         ========================================================= -->
+    <script src="https://cdn.jsdelivr.net/npm/mind-ar@1.2.5/dist/mindar-image-aframe.prod.js"></script>
+
+
+    <style>
+
+        /* =========================================================
+           CSS GENERAL
+
+           Aquí se controla la apariencia de la página.
+
+           El reconocimiento AR NO se configura aquí.
+           Aquí solamente se define cómo se ve la interfaz.
+           ========================================================= */
+
+        html,
+        body {
+
+            margin: 0;
+            padding: 0;
+
+            width: 100%;
+            height: 100%;
+
+            /*
+             * Evita que aparezcan barras de desplazamiento.
+             */
+            overflow: hidden;
+
+            /*
+             * Fuente general de la página.
+             */
+            font-family: Arial, sans-serif;
+
+            background: #000;
+        }
+
+
+        /* =========================================================
+           MENÚ PRINCIPAL
+
+           Este bloque controla la barra donde estarán los botones.
+
+           Puedes cambiar:
+           height       = altura
+           background   = color/transparencia
+           gap          = separación entre botones
+           ========================================================= */
+
+        #menu {
+
+            position: fixed;
+
+            top: 0;
+            left: 0;
+
+            width: 100%;
+            height: 70px;
+
+            background: rgba(0, 0, 0, 0.85);
+
+            z-index: 20;
+
+            display: flex;
+
+            align-items: center;
+
+            justify-content: center;
+
+            gap: 10px;
+        }
+
+
+        /* =========================================================
+           BOTONES DEL MENÚ
+
+           Esta parte modifica la apariencia de los cinco botones.
+
+           padding       = tamaño interno
+           font-size     = tamaño del texto
+           border-radius = redondeo
+           ========================================================= */
+
+        #menu button {
+
+            padding: 10px 15px;
+
+            font-size: 14px;
+
+            border: none;
+
+            border-radius: 6px;
+
+            cursor: pointer;
+        }
+
+
+        /* =========================================================
+           ESCENA AR
+
+           La cámara AR ocupa toda la pantalla excepto el espacio
+           reservado para el menú superior.
+
+           top: 70px
+           significa que la escena comienza debajo del menú.
+           ========================================================= */
+
+        a-scene {
+
+            position: fixed;
+
+            top: 70px;
+
+            left: 0;
+
+            width: 100%;
+
+            height: calc(100% - 70px);
+        }
+
+    </style>
+
+</head>
+
+
+<body>
+
+
+    <!-- =========================================================
+         MENÚ
+
+         IMPORTANTE:
+
+         Estos son botones HTML normales.
+
+         NO son los cinco targets de MindAR.
+
+         Sirven para navegar manualmente entre las páginas.
+         ========================================================= -->
+
+    <div id="menu">
+
+        <button onclick="location.href='index.html'">
+            ÍNDICE
+        </button>
+
+        <button onclick="location.href='audio.html'">
+            AUDIO
+        </button>
+
+        <button onclick="location.href='video.html'">
+            VIDEO
+        </button>
+
+        <button onclick="location.href='pdf.html'">
+            PDF
+        </button>
+
+        <button onclick="location.href='galeria.html'">
+            GALERÍA
+        </button>
+
+    </div>
+
+
+    <!-- =========================================================
+         ESCENA MINDAR
+
+         Aquí se carga el archivo:
+
+             targets.mind
+
+         Este será nuestro archivo general de reconocimiento.
+
+         En este primer ejemplo contiene 5 targets:
+
+             Target 0 = m1.jpg
+             Target 1 = m2.jpg
+             Target 2 = m3.jpg
+             Target 3 = m4.jpg
+             Target 4 = m5.jpg
+
+         IMPORTANTE:
+
+         targets.mind NO contiene las rutas HTML.
+
+         Las rutas se establecen mediante JavaScript.
+         ========================================================= -->
+
+    <a-scene
+
+        mindar-image="imageTargetSrc: ./targets.mind;"
+
+        vr-mode-ui="enabled: false"
+
+        device-orientation-permission-ui="enabled: false"
+    >
+
+
+        <!-- =====================================================
+             CÁMARA
+
+             La cámara del celular observa las imágenes físicas.
+             ===================================================== -->
+
+        <a-camera
+
+            position="0 0 0"
+
+            look-controls="enabled: false">
+
+        </a-camera>
+
+
+        <!-- =====================================================
+             TARGET 0
+
+             Este target corresponde a:
+
+                 m1.jpg
+
+             Es el icono ÍNDICE.
+
+             Al reconocerlo, permanecerá en index.html.
+             ===================================================== -->
+
+        <a-entity
+
+            mindar-image-target="targetIndex: 0"
+
+            data-pagina="index.html">
+
+        </a-entity>
+
+
+        <!-- =====================================================
+             TARGET 1
+
+             Corresponde a:
+
+                 m2.jpg
+
+             Icono AUDIO
+
+             Al reconocerlo:
+                 → abre audio.html
+             ===================================================== -->
+
+        <a-entity
+
+            mindar-image-target="targetIndex: 1"
+
+            data-pagina="audio.html">
+
+        </a-entity>
+
+
+        <!-- =====================================================
+             TARGET 2
+
+             Corresponde a:
+
+                 m3.jpg
+
+             Icono VIDEO
+
+             Al reconocerlo:
+                 → abre video.html
+             ===================================================== -->
+
+        <a-entity
+
+            mindar-image-target="targetIndex: 2"
+
+            data-pagina="video.html">
+
+        </a-entity>
+
+
+        <!-- =====================================================
+             TARGET 3
+
+             Corresponde a:
+
+                 m4.jpg
+
+             Icono PDF
+
+             Al reconocerlo:
+                 → abre pdf.html
+             ===================================================== -->
+
+        <a-entity
+
+            mindar-image-target="targetIndex: 3"
+
+            data-pagina="pdf.html">
+
+        </a-entity>
+
+
+        <!-- =====================================================
+             TARGET 4
+
+             Corresponde a:
+
+                 m5.jpg
+
+             Icono GALERÍA
+
+             Al reconocerlo:
+                 → abre galeria.html
+             ===================================================== -->
+
+        <a-entity
+
+            mindar-image-target="targetIndex: 4"
+
+            data-pagina="galeria.html">
+
+        </a-entity>
+
+
+    </a-scene>
+
+
+
+    <!-- =========================================================
+         JAVASCRIPT
+
+         Aquí ocurre la parte IMPORTANTE:
+
+         MindAR reconoce una imagen.
+         JavaScript averigua qué target fue reconocido.
+         Después obtiene la página indicada en:
+
+             data-pagina
+
+         Finalmente cambia de HTML.
+         ========================================================= -->
+
+    <script>
+
+
+        /*
+         * ---------------------------------------------------------
+         * BUSCAMOS TODOS LOS TARGETS
+         * ---------------------------------------------------------
+         */
+
+        const targets = document.querySelectorAll(
+            "[mindar-image-target]"
+        );
+
+
+        /*
+         * ---------------------------------------------------------
+         * RECORREMOS LOS 5 TARGETS
+         * ---------------------------------------------------------
+         */
+
+        targets.forEach((target) => {
+
+
+            /*
+             * -----------------------------------------------------
+             * CUANDO MINDAR ENCUENTRA EL ICONO
+             * -----------------------------------------------------
+             */
+
+            target.addEventListener("targetFound", () => {
+
+
+                /*
+                 * Leemos la página indicada en:
+
+                     data-pagina="audio.html"
+
+                 * o:
+
+                     data-pagina="video.html"
+
+                 * etc.
+                 */
+
+                const pagina = target.getAttribute(
+                    "data-pagina"
+                );
+
+
+                /*
+                 * -------------------------------------------------
+                 * ABRIMOS LA PÁGINA CORRESPONDIENTE
+                 * -------------------------------------------------
+                 *
+                 * location.href cambia la página actual.
+                 */
+
+                window.location.href = pagina;
+
+            });
+
+        });
+
+    </script>
+
+
+</body>
+
+</html>
+```
