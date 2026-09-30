@@ -8,7 +8,8 @@
 
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>Prueba AR</title>
+<title>Índice - Realidad Aumentada</title>
+
 
 <script src="https://aframe.io/releases/1.5.0/aframe.min.js"></script>
 
@@ -48,6 +49,8 @@ body {
     width: 85%;
 
     padding: 18px;
+
+    box-sizing: border-box;
 
     background: rgba(0, 0, 0, 0.85);
 
@@ -117,7 +120,7 @@ a-scene {
     </a-camera>
 
 
-    <!-- m1 -->
+    <!-- m1 = ÍNDICE -->
 
     <a-entity
 
@@ -126,7 +129,7 @@ a-scene {
     </a-entity>
 
 
-    <!-- m2 -->
+    <!-- m2 = AUDIO -->
 
     <a-entity
 
@@ -135,7 +138,7 @@ a-scene {
     </a-entity>
 
 
-    <!-- m3 -->
+    <!-- m3 = VIDEO -->
 
     <a-entity
 
@@ -144,7 +147,7 @@ a-scene {
     </a-entity>
 
 
-    <!-- m4 -->
+    <!-- m4 = PDF -->
 
     <a-entity
 
@@ -153,7 +156,7 @@ a-scene {
     </a-entity>
 
 
-    <!-- m5 -->
+    <!-- m5 = GALERÍA -->
 
     <a-entity
 
@@ -167,21 +170,27 @@ a-scene {
 
 <script>
 
-const mensaje = document.getElementById("mensaje");
-
-const targets = document.querySelectorAll(
-    "[mindar-image-target]"
-);
+const mensaje =
+    document.getElementById("mensaje");
 
 
-targets.forEach((target, indice) => {
+const targets =
+    document.querySelectorAll(
+        "[mindar-image-target]"
+    );
 
-    target.addEventListener("targetFound", () => {
 
-        mensaje.textContent =
-            "¡RECONOCIDO! m" + (indice + 1);
+targets.forEach(function(target, indice) {
 
-    });
+    target.addEventListener(
+        "targetFound",
+        function() {
+
+            mensaje.textContent =
+                "¡RECONOCIDO! m" + (indice + 1);
+
+        }
+    );
 
 });
 
@@ -191,3 +200,4 @@ targets.forEach((target, indice) => {
 </body>
 
 </html>
+
