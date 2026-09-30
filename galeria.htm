@@ -280,19 +280,8 @@
             z-index: 1;
         }
 		
-#tituloPagina {
-    position: fixed;
-    top: 60px;
-    left: 50%;
-    transform: translateX(-50%);
-    color: white;
-    background: rgba(0, 0, 0, 0.70);
-    padding: 6px 18px;
-    border-radius: 6px;
-    font-size: 18px;
-    font-weight: bold;
-    z-index: 3000;
-	} 
+#tituloIndex { 
+position: fixed; top: 5px; left: 50%; transform: translateX(-50%); color: white; background: rgba(0, 0, 0, 0.70); padding: 6px 18px; border-radius: 6px; font-size: 18px; font-weight: bold; z-index: 3000; }
 	
     </style>
 
@@ -453,7 +442,7 @@
 
             mindar-image-target="targetIndex: 12"
 
-            data-galeria="galeria2"
+            data-galeria="sentidos"
 
         >
         </a-entity>
@@ -521,11 +510,11 @@
 
     ],
 
-    galeria2: [
+    sentidos: [
 
-        "galeria/galeria2/foto1.jpg",
-        "galeria/galeria2/foto2.jpg",
-        "galeria/galeria2/foto3.jpg"
+        "galeria/sentidos/foto1.jpg",
+        "galeria/sentidos/foto2.jpg",
+        "galeria/sentidos/foto3.jpg"
 
     ]
 
@@ -613,7 +602,7 @@
                     else {
 
                         tituloGaleria.textContent =
-                            "Galería 2";
+                            "sentidos";
 
                     }
 
