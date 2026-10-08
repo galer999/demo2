@@ -5,25 +5,11 @@
 
     <meta charset="UTF-8">
 
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport"
+        content="width=device-width, initial-scale=1.0">
 
-    <title>Audio AR</title>
+    <title>Audio</title>
 
-
-    <!--
-    ============================================================
-    LIBRERÍAS AR
-    ============================================================
-
-    NOTA DE AUTOR:
-
-    A-Frame se encarga de crear la escena 3D/AR.
-
-    MindAR se encarga de reconocer las imágenes físicas
-    que hemos registrado como targets.
-
-    La escena continúa activa aunque aparezca el reproductor.
-    -->
 
     <script src="https://aframe.io/releases/1.5.0/aframe.min.js"></script>
 
@@ -31,31 +17,7 @@
 
 
     <style>
-
-        /*
-        ============================================================
-        CSS = APARIENCIA VISUAL
-        ============================================================
-
-        NOTA DE AUTOR:
-
-        Aquí controlamos cómo se ve todo en pantalla:
-
-        - menú
-        - reproductor
-        - botón CERRAR
-        - textos
-        - paneles
-        - posiciones
-        - tamaños
-        - colores
-
-        Esta parte NO reconoce las imágenes.
-        Solo controla la apariencia.
-        */
-
-
-        html,
+     html,
         body {
             margin: 0;
             padding: 0;
@@ -66,18 +28,7 @@
         }
 
 
-        /*
-        ============================================================
-        MENÚ SUPERIOR
-        ============================================================
-
-        NOTA DE AUTOR:
-
-        El menú permanece visible sobre la cámara.
-
-        AUDIO queda resaltado porque estamos dentro de
-        la sección de audio.
-        */
+   
 
         #menu {
 
@@ -102,9 +53,6 @@
         }
 
 
-        /*
-        BOTONES DEL MENÚ
-        */
 
         #menu button {
 
@@ -124,16 +72,6 @@
         }
 
 
-        /*
-        ============================================================
-        BOTÓN ACTIVO
-        ============================================================
-
-        NOTA DE AUTOR:
-
-        AUDIO queda visualmente marcado para que el usuario
-        sepa en qué sección está.
-        */
 
         #menu button.active {
 
@@ -145,23 +83,6 @@
         }
 
 
-        /*
-        ============================================================
-        CONTENEDOR DEL CONTENIDO FLOTANTE
-        ============================================================
-
-        NOTA DE AUTOR:
-
-        Este es uno de los puntos IMPORTANTES del proyecto.
-
-        El contenido NO está pegado físicamente al target.
-
-        Es HTML fijo sobre la pantalla.
-
-        Por eso, después de reconocer m6 o m7,
-        la persona puede mover la cámara libremente
-        y el reproductor continuará visible.
-        */
 
         #panelAudio {
 
@@ -193,25 +114,6 @@
         }
 
 
-        /*
-        ============================================================
-        BOTÓN CERRAR
-        ============================================================
-
-        NOTA DE AUTOR:
-
-        Este botón es FUNDAMENTAL.
-
-        El reproductor no desaparece por tiempo.
-
-        Permanece abierto hasta que la persona pulse CERRAR.
-
-        Al cerrar:
-
-        - se detiene el audio
-        - se oculta el panel
-        - la cámara queda disponible nuevamente
-        */
 
         #cerrar {
 
@@ -237,12 +139,7 @@
         }
 
 
-        /*
-        ============================================================
-        TÍTULO
-        ============================================================
-        */
-
+     
         #tituloAudio {
 
             margin-top: 0;
@@ -255,28 +152,6 @@
         }
 
 
-        /*
-        ============================================================
-        REPRODUCTOR
-        ============================================================
-
-        NOTA DE AUTOR:
-
-        "controls" hace que el navegador genere
-        automáticamente:
-
-        - Play
-        - Pausa
-        - Barra de desplazamiento
-        - Tiempo
-        - Volumen
-
-        El audio NO tiene autoplay.
-
-        Por lo tanto, al reconocer la imagen aparece
-        el reproductor, pero permanece en silencio
-        hasta que el usuario pulse Play.
-        */
 
         #reproductor {
 
@@ -286,18 +161,6 @@
         }
 
 
-        /*
-        ============================================================
-        PANEL DE TEXTO
-        ============================================================
-
-        NOTA DE AUTOR:
-
-        Aquí podremos colocar el texto correspondiente
-        al audio reconocido.
-
-        Es un panel visual con fondo y texto contrastante.
-        */
 
         #textoAudio {
 
@@ -317,18 +180,6 @@
         }
 
 
-        /*
-        ============================================================
-        ESCENA AR
-        ============================================================
-
-        NOTA DE AUTOR:
-
-        La escena ocupa toda la pantalla.
-
-        El menú y el panel de audio están por encima
-        gracias a sus valores de z-index.
-        */
 
         a-scene {
             position: fixed;
@@ -339,8 +190,19 @@
             z-index: 1;
         }
 		
-#tituloIndex { 
-position: fixed; top: 5px; left: 50%; transform: translateX(-50%); color: white; background: rgba(0, 0, 0, 0.70); padding: 6px 18px; border-radius: 6px; font-size: 18px; font-weight: bold; z-index: 3000; }
+		#tituloIndex { 
+			position: fixed; 
+			top: 5px; left: 50%; 
+			transform: translateX(-50%); 
+			color: white; 
+			background: rgba(0, 0, 0, 0.70); 
+			padding: 6px 18px; 
+			border-radius: 6px; 
+			font-size: 18px; 
+			font-weight: bold; 
+			z-index: 3000; 
+		}
+
 
     </style>
 
@@ -349,12 +211,6 @@ position: fixed; top: 5px; left: 50%; transform: translateX(-50%); color: white;
 
 <body>
 
-
-    <!--
-    ================================================================
-    MENÚ SUPERIOR
-    ================================================================
-    -->
 
     <div id="menu">
 
@@ -380,24 +236,11 @@ position: fixed; top: 5px; left: 50%; transform: translateX(-50%); color: white;
 
     </div>
 
-<div id="tituloIndex"> audio </div>
 
-    <!--
-    ================================================================
-    ESCENA AR
-    ================================================================
+    <div id="tituloIndex">
+        audio
+    </div>
 
-    NOTA DE AUTOR:
-
-    MindAR utiliza targets.mind para reconocer las fotografías.
-
-    Aquí NO estamos mostrando m6.jpg ni m7.jpg.
-
-    Las fotografías son imágenes físicas que la cámara reconoce.
-
-    Cuando MindAR detecta un target, JavaScript decide qué
-    contenido debe aparecer.
-    -->
 
     <a-scene
 
@@ -412,12 +255,6 @@ position: fixed; top: 5px; left: 50%; transform: translateX(-50%); color: white;
         device-orientation-permission-ui="enabled: false">
 
 
-        <!--
-        ============================================================
-        CÁMARA
-        ============================================================
-        -->
-
         <a-camera
 
             position="0 0 0"
@@ -431,18 +268,39 @@ position: fixed; top: 5px; left: 50%; transform: translateX(-50%); color: white;
         </a-camera>
 
 
-        <!--
-        ============================================================
-        TARGET m6
-        ============================================================
+        <!-- TARGETS DE NAVEGACIÓN -->
 
-        NOTA DE AUTOR:
+        <a-entity
+            mindar-image-target="targetIndex: 0"
+            data-navegacion="index.html">
+        </a-entity>
 
-        targetIndex="5" significa que m6 ocupa el índice 5
-        dentro de targets.mind.
 
-        Al reconocerlo, JavaScript abrirá el audio 1.
-        -->
+        <a-entity
+            mindar-image-target="targetIndex: 1"
+            data-navegacion="mp3.htm">
+        </a-entity>
+
+
+        <a-entity
+            mindar-image-target="targetIndex: 2"
+            data-navegacion="video.htm">
+        </a-entity>
+
+
+        <a-entity
+            mindar-image-target="targetIndex: 3"
+            data-navegacion="pdf.htm">
+        </a-entity>
+
+
+        <a-entity
+            mindar-image-target="targetIndex: 4"
+            data-navegacion="galeria.htm">
+        </a-entity>
+
+
+        <!-- TARGETS DE CONTENIDO -->
 
         <a-entity
 
@@ -457,16 +315,6 @@ position: fixed; top: 5px; left: 50%; transform: translateX(-50%); color: white;
         </a-entity>
 
 
-        <!--
-        ============================================================
-        TARGET m7
-        ============================================================
-
-        targetIndex="6" corresponde a m7.
-
-        Al reconocerlo, JavaScript abrirá el audio 2.
-        -->
-
         <a-entity
 
             mindar-image-target="targetIndex: 6"
@@ -479,48 +327,22 @@ position: fixed; top: 5px; left: 50%; transform: translateX(-50%); color: white;
 
         </a-entity>
 
+
     </a-scene>
 
 
-
-    <!--
-    ================================================================
-    PANEL FLOTANTE
-    ================================================================
-
-    NOTA DE AUTOR:
-
-    Este panel NO está dentro del objeto AR.
-
-    Es un elemento HTML fijo sobre la pantalla.
-
-    Por eso permanece visible aunque la cámara se mueva.
-    -->
-
     <div id="panelAudio">
 
-
-        <!--
-        BOTÓN CERRAR
-        -->
 
         <button id="cerrar">
             ← CERRAR
         </button>
 
 
-        <!--
-        TÍTULO
-        -->
-
         <h1 id="tituloAudio">
             Audio
         </h1>
 
-
-        <!--
-        REPRODUCTOR
-        -->
 
         <audio id="reproductor" controls>
 
@@ -528,10 +350,6 @@ position: fixed; top: 5px; left: 50%; transform: translateX(-50%); color: white;
 
         </audio>
 
-
-        <!--
-        TEXTO
-        -->
 
         <div id="textoAudio">
 
@@ -544,43 +362,7 @@ position: fixed; top: 5px; left: 50%; transform: translateX(-50%); color: white;
     </div>
 
 
-
     <script>
-
-        /*
-        ============================================================
-        JAVASCRIPT
-        ============================================================
-
-        NOTA DE AUTOR:
-
-        Aquí ocurre la conexión entre:
-
-        FOTO RECONOCIDA
-                ↓
-        ARCHIVO MP3
-                ↓
-        PANEL FLOTANTE
-
-        MindAR detecta la fotografía.
-
-        JavaScript recibe el evento "targetFound".
-
-        Entonces lee:
-
-        data-audio
-        data-titulo
-        data-texto
-
-        y coloca esos datos en el panel.
-        */
-
-
-        /*
-        ============================================================
-        OBTENEMOS LOS ELEMENTOS HTML
-        ============================================================
-        */
 
         const panelAudio =
             document.getElementById("panelAudio");
@@ -598,46 +380,47 @@ position: fixed; top: 5px; left: 50%; transform: translateX(-50%); color: white;
             document.getElementById("cerrar");
 
 
-        /*
-        ============================================================
-        BUSCAMOS LOS TARGETS
-        ============================================================
-        */
+        /* TARGETS DE NAVEGACIÓN */
 
-        const targets =
+        const targetsNavegacion =
             document.querySelectorAll(
-                "[mindar-image-target]"
+                "[data-navegacion]"
             );
 
 
-        /*
-        ============================================================
-        RECONOCIMIENTO DE TARGET
-        ============================================================
-
-        NOTA DE AUTOR:
-
-        Cuando MindAR reconoce m6 o m7,
-        se ejecuta esta función.
-
-        No redirigimos a otra página.
-
-        Simplemente mostramos el panel flotante.
-        */
-
-        targets.forEach(function(target) {
-
+        targetsNavegacion.forEach(function(target) {
 
             target.addEventListener(
                 "targetFound",
                 function() {
 
+                    const pagina =
+                        target.getAttribute(
+                            "data-navegacion"
+                        );
 
-                    /*
-                    ------------------------------------------------
-                    OBTENER DATOS DEL TARGET
-                    ------------------------------------------------
-                    */
+                    location.href = pagina;
+
+                }
+            );
+
+        });
+
+
+        /* TARGETS DE AUDIO */
+
+        const targetsAudio =
+            document.querySelectorAll(
+                "[data-audio]"
+            );
+
+
+        targetsAudio.forEach(function(target) {
+
+            target.addEventListener(
+                "targetFound",
+                function() {
+
 
                     const audio =
                         target.getAttribute(
@@ -657,12 +440,6 @@ position: fixed; top: 5px; left: 50%; transform: translateX(-50%); color: white;
                         );
 
 
-                    /*
-                    ------------------------------------------------
-                    CARGAR INFORMACIÓN
-                    ------------------------------------------------
-                    */
-
                     tituloAudio.textContent =
                         titulo;
 
@@ -671,29 +448,9 @@ position: fixed; top: 5px; left: 50%; transform: translateX(-50%); color: white;
                         texto;
 
 
-                    /*
-                    ------------------------------------------------
-                    CARGAR AUDIO
-                    ------------------------------------------------
-
-                    NOTA DE AUTOR:
-
-                    Aquí se cambia el archivo MP3.
-
-                    m6 → audio1.mp3
-
-                    m7 → audio2.mp3
-                    */
-
                     reproductor.src =
                         audio;
 
-
-                    /*
-                    ------------------------------------------------
-                    MOSTRAR PANEL
-                    ------------------------------------------------
-                    */
 
                     panelAudio.style.display =
                         "block";
@@ -705,53 +462,21 @@ position: fixed; top: 5px; left: 50%; transform: translateX(-50%); color: white;
         });
 
 
-        /*
-        ============================================================
-        BOTÓN CERRAR
-        ============================================================
-
-        NOTA DE AUTOR:
-
-        Al pulsar CERRAR:
-
-        1. Se detiene el audio.
-        2. Se devuelve el reproductor al inicio.
-        3. Se oculta el panel.
-        4. La cámara queda disponible para reconocer
-           otro target.
-        */
-
         botonCerrar.addEventListener(
             "click",
             function() {
 
 
-                /*
-                DETENER AUDIO
-                */
-
                 reproductor.pause();
 
 
-                /*
-                VOLVER AL PRINCIPIO
-                */
-
                 reproductor.currentTime = 0;
 
-
-                /*
-                QUITAR ARCHIVO ACTUAL
-                */
 
                 reproductor.removeAttribute("src");
 
                 reproductor.load();
 
-
-                /*
-                OCULTAR PANEL
-                */
 
                 panelAudio.style.display =
                     "none";
@@ -762,7 +487,9 @@ position: fixed; top: 5px; left: 50%; transform: translateX(-50%); color: white;
     </script>
 
 
+
+
+
 </body>
 
 </html>
-```
